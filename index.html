@@ -126,12 +126,14 @@ It's like Laravel Homestead but for Docker instead of Vagrant.</p>
 <a href="#Misc">Misc</a>
 
 <ul>
+<li><a href="#Change-the-timezone">Change the timezone</a></li>
 <li><a href="#CronJobs">Cron jobs</a></li>
 <li><a href="#MySQL-access-from-host">MySQL access from host</a></li>
 <li><a href="#Use-custom-Domain">Use custom Domain</a></li>
 <li><a href="#Enable-Global-Composer-Build-Install">Enable Global Composer Build Install</a></li>
 <li><a href="#Install-Prestissimo">Install Prestissimo</a></li>
 <li><a href="#Install-Node">Install Node + NVM</a></li>
+<li><a href="#Install-Yarn">Install Node + YARN</a></li>
 <li><a href="#debugging">Debugging</a></li>
 <li><a href="#upgrading-laradock">Upgrading LaraDock</a></li>
 </ul>
@@ -499,13 +501,15 @@ It contains pre-packaged Docker Images that provides you a wonderful development
 
 <p>Change MySQL Database Name:</p>
 
-<div class="highlight highlight-source-yaml"><pre>  <span class="pl-ent">environment:</span>
-    <span class="pl-ent">MYSQL_DATABASE:</span> <span class="pl-s">laradock</span></pre></div>
+<div class="highlight highlight-source-yaml"><pre>    <span class="pl-ent">environment:</span>
+        <span class="pl-ent">MYSQL_DATABASE:</span> <span class="pl-s">laradock</span>
+<span class="pl-s">    ...</span></pre></div>
 
 <p>Change Redis defaut port to 1111:</p>
 
-<div class="highlight highlight-source-yaml"><pre>  <span class="pl-ent">ports:</span>
-    - <span class="pl-s"><span class="pl-pds">"</span>1111:6379<span class="pl-pds">"</span></span></pre></div>
+<div class="highlight highlight-source-yaml"><pre>    <span class="pl-ent">ports:</span>
+        - <span class="pl-s"><span class="pl-pds">"</span>1111:6379<span class="pl-pds">"</span></span>
+<span class="pl-s">    ...</span></pre></div>
 
 <p><br>
 <a name="Edit-a-Docker-Image"></a></p>
@@ -592,7 +596,8 @@ example for <code>mysql</code> it will be <code>mysql/Dockerfile</code>.</p>
 <div class="highlight highlight-source-yaml"><pre>    <span class="pl-ent">application:</span>
         <span class="pl-ent">build:</span> <span class="pl-s">./application</span>
         <span class="pl-ent">volumes:</span>
-            - <span class="pl-s">../my-cool-app/:/var/www/laravel</span></pre></div>
+            - <span class="pl-s">../my-cool-app/:/var/www/laravel</span>
+<span class="pl-s">    ...</span></pre></div>
 
 <p>4 - Go to that folder and start working..</p>
 
@@ -827,11 +832,11 @@ The PHP-CLI extensions should be installed in <code>workspace/Dockerfile</code>.
 
 <p>3 - Change the version number, by replacing <code>Dockerfile-70</code> with <code>Dockerfile-56</code>, like this:</p>
 
-<pre lang="txt"><code>php-fpm:
-    build:
-        context: ./php-fpm
-        dockerfile: Dockerfile-70
-</code></pre>
+<div class="highlight highlight-source-yaml"><pre>    <span class="pl-ent">php-fpm:</span>
+        <span class="pl-ent">build:</span>
+            <span class="pl-ent">context:</span> <span class="pl-s">./php-fpm</span>
+            <span class="pl-ent">dockerfile:</span> <span class="pl-s">Dockerfile-70</span>
+<span class="pl-s">    ...</span></pre></div>
 
 <p>4 - Finally rebuild the container</p>
 
@@ -969,6 +974,24 @@ xdebug.remote_connect_back=1
 
 <p><br></p>
 
+<p><a name="Change-the-timezone"></a></p>
+
+<h3>
+<a id="change-the-timezone" class="anchor" href="#change-the-timezone" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Change the timezone</h3>
+
+<p>To change the timezone for the <code>workspace</code> container, modify the <code>TZ</code> build argument in the Docker Compose file to one in the <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">TZ database</a>.</p>
+
+<p>For example, if I want the timezone to be <code>New York</code>:</p>
+
+<div class="highlight highlight-source-yaml"><pre>    <span class="pl-ent">workspace:</span>
+        <span class="pl-ent">build:</span>
+            <span class="pl-ent">context:</span> <span class="pl-s">./workspace</span>
+            <span class="pl-ent">args:</span>
+                - <span class="pl-s">TZ=America/New_York</span>
+<span class="pl-s">    ...</span></pre></div>
+
+<p>We also recommend <a href="http://www.camroncade.com/managing-timezones-with-laravel/">setting the timezone in Laravel</a>.</p>
+
 <p><a name="CronJobs"></a></p>
 
 <h3>
@@ -981,6 +1004,8 @@ xdebug.remote_connect_back=1
 # Custom cron
 * * * * * root echo "Every Minute" &gt; /var/log/cron.log 2&gt;&amp;1
 </code></pre>
+
+<p>Make sure you <a href="#Change-the-timezone">change the timezone</a> if you don't want to use the default (UTC).</p>
 
 <p><a name="MySQL-access-from-host"></a></p>
 
@@ -1080,6 +1105,30 @@ xdebug.remote_connect_back=1
 <p>3 - Re-build the container <code>docker-compose build workspace</code></p>
 
 <p><br>
+<a name="Install-Yarn"></a></p>
+
+<h3>
+<a id="install-node--yarn" class="anchor" href="#install-node--yarn" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install Node + YARN</h3>
+
+<p>Yarn is a new package manager for JavaScript. It is so faster than npm, which you can find <a href="http://yarnpkg.com/en/compare">here</a>.To install NodeJS and <a href="https://yarnpkg.com/">Yarn</a> in the Workspace container:</p>
+
+<p>1 - Open the <code>docker-compose.yml</code> file</p>
+
+<p>2 - Search for the <code>INSTALL_NODE</code> and <code>INSTALL_YARN</code> argument under the Workspace Container and set it to <code>true</code></p>
+
+<p>It should be like this:</p>
+
+<div class="highlight highlight-source-yaml"><pre>    <span class="pl-ent">workspace:</span>
+        <span class="pl-ent">build:</span>
+            <span class="pl-ent">context:</span> <span class="pl-s">./workspace</span>
+            <span class="pl-ent">args:</span>
+                - <span class="pl-s">INSTALL_NODE=true</span>
+                - <span class="pl-s">INSTALL_YARN=true</span>
+<span class="pl-s">    ...</span></pre></div>
+
+<p>3 - Re-build the container <code>docker-compose build workspace</code></p>
+
+<p><br>
 <a name="Install-Aerospike-Extension"></a></p>
 
 <h3>
@@ -1148,6 +1197,16 @@ e) set it to <code>true</code></p>
 <li>Click on the <code>Shared Drives</code> tab and check the drive that contains your project files.</li>
 <li>Enter your windows username and password.</li>
 <li>Go to the <code>reset</code> tab and click restart docker.</li>
+</ol>
+
+<h4>
+<a id="i-get-mysql-connection-refused" class="anchor" href="#i-get-mysql-connection-refused" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>I get Mysql connection refused</h4>
+
+<p>This error is sometimes happens because your Laravel application isn't running on the container localhost IP (Which is 127.0.0.1). Steps to fix it:</p>
+
+<ol>
+<li>Check your running Laravel application IP by dumping <code>Request::ip()</code> variable using <code>dd(Request::ip())</code> anywhere on your application. The result is the IP of your Laravel container.</li>
+<li>Change the <code>DB_HOST</code> variable on env with the IP that you received from previous step.</li>
 </ol>
 
 <p><br>
