@@ -1,7 +1,0 @@
-{
-  "name": "LaraDock",
-  "tagline": "Like Laravel Homestead but for Docker instead of Vagrant.",
-  "body": "# Laradock\r\n\r\nVisit the full documentation here [https://github.com/LaraDock/laradock](https://github.com/LaraDock/laradock)",
-  "google": "",
-  "note": "Don't delete this file! It's used internally to help with page regeneration."
-}
